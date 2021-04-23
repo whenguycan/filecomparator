@@ -41,9 +41,7 @@ public class FileComparator {
     public void createTemplate() {
         System.out.println("createTemplate start");
         FileTemplate template = new FileTemplate();
-        this.filters.forEach(filter -> {
-            fillTemplate(template, filter, filter.sourceRoot);
-        });
+        this.filters.forEach(filter -> fillTemplate(template, filter, filter.sourceRoot));
         System.out.printf("%s file fill in template%n", template.size());
         File templateFile = new File(PATCH_AND_TEMPLATE_OUTPUT_DIR,
                 StringUtils.concat(PROJECT_NAME, StringUtils.currentTimestamp(), TEMPLATE_FILE_EXT));
@@ -74,9 +72,7 @@ public class FileComparator {
         FileTemplate template = (FileTemplate) FileSerializer.deserialize(templateFile);
         template.clearChanged();
         String timestamp = StringUtils.currentTimestamp();
-        this.filters.forEach(filter -> {
-            matchAndCopy(template, filter, filter.sourceRoot, timestamp);
-        });
+        this.filters.forEach(filter -> matchAndCopy(template, filter, filter.sourceRoot, timestamp));
         System.out.printf("%s file changed and copied%n", template.changed());
         File templateFileNew = new File(PATCH_AND_TEMPLATE_OUTPUT_DIR,
                 StringUtils.concat(PROJECT_NAME, timestamp, TEMPLATE_FILE_EXT));
