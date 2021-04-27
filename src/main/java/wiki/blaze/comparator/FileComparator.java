@@ -34,7 +34,7 @@ public class FileComparator {
         FileComparator comparator = new FileComparator();
         comparator.filters.add(new TypeFilter(PROJECT_CLASSES_DIR, PATCH_CLASSES_DIR, ".class"));
         comparator.filters.add(new TypeFilter(PROJECT_MAPPER_DIR, PATCH_MAPPER_DIR, ".xml"));
-        comparator.filters.add(new TypeFilter(PROJECT_WEB_INF_DIR, PATCH_WEB_INF_DIR, ".jsp"));
+        comparator.filters.add(new TypeFilter(PROJECT_WEB_INF_DIR, PATCH_WEB_INF_DIR, ".jsp,.lib"));
         return comparator;
     }
 
