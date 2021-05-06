@@ -15,27 +15,40 @@ import java.util.*;
  */
 public class FileComparator {
 
-    static final String PATCH_AND_TEMPLATE_OUTPUT_DIR = "C:\\_git_repo\\patches";
-    static final String PROJECT_NAME = "3.3_Gemini_sldlxx";
-    static final String PROJECT_DIR = "C:\\_git_repo\\3.3_Gemini_sldlxx";
-    static final String TEMPLATE_FILE_EXT = ".t";
-    static final String PROJECT_CLASSES_DIR = PROJECT_DIR + "\\target\\classes";
-    static final String PATCH_CLASSES_DIR = PATCH_AND_TEMPLATE_OUTPUT_DIR + "\\" + PROJECT_NAME + "\\WEB-INF\\classes";
-    static final String PROJECT_MAPPER_DIR = PROJECT_DIR + "\\src\\main\\resources\\mapper";
-    static final String PATCH_MAPPER_DIR = PATCH_AND_TEMPLATE_OUTPUT_DIR + "\\" + PROJECT_NAME + "\\WEB-INF\\classes\\mapper";
-    static final String PROJECT_WEB_INF_DIR = PROJECT_DIR + "\\src\\main\\webapp\\WEB-INF";
-    static final String PATCH_WEB_INF_DIR = PATCH_AND_TEMPLATE_OUTPUT_DIR + "\\" + PROJECT_NAME + "\\WEB-INF";
-
-    private FileComparator() {}
+    String PATCH_AND_TEMPLATE_OUTPUT_DIR = "C:\\_git_repo\\patches";
+    String TEMPLATE_FILE_EXT = ".t";
+    String PROJECT_NAME;
+    String PROJECT_DIR;
+    String PROJECT_CLASSES_DIR;
+    String PATCH_CLASSES_DIR;
+    String PROJECT_MAPPER_DIR;
+    String PATCH_MAPPER_DIR;
+    String PROJECT_WEB_INF_DIR;
+    String PATCH_WEB_INF_DIR;
 
     List<TypeFilter> filters = new ArrayList<>();
 
-    public static FileComparator getDefaultComparator() {
-        FileComparator comparator = new FileComparator();
-        comparator.filters.add(new TypeFilter(PROJECT_CLASSES_DIR, PATCH_CLASSES_DIR, ".class"));
-        comparator.filters.add(new TypeFilter(PROJECT_MAPPER_DIR, PATCH_MAPPER_DIR, ".xml"));
-        comparator.filters.add(new TypeFilter(PROJECT_WEB_INF_DIR, PATCH_WEB_INF_DIR, ".jsp,.lib"));
-        return comparator;
+    public FileComparator(String projectName) {
+        PROJECT_NAME = projectName;
+        if(PROJECT_NAME == null || PROJECT_NAME.length() == 0) {
+            throw new RuntimeException("projectName is empty");
+        }
+        PROJECT_DIR = "C:\\_git_repo\\" + PROJECT_NAME;
+        File dir = new File(PROJECT_DIR);
+        if(!dir.exists()) {
+            throw new RuntimeException("projectName is incorrect");
+        }
+
+        PROJECT_CLASSES_DIR = PROJECT_DIR + "\\target\\classes";
+        PATCH_CLASSES_DIR = PATCH_AND_TEMPLATE_OUTPUT_DIR + "\\" + PROJECT_NAME + "\\WEB-INF\\classes";
+        PROJECT_MAPPER_DIR = PROJECT_DIR + "\\src\\main\\resources\\mapper";
+        PATCH_MAPPER_DIR = PATCH_AND_TEMPLATE_OUTPUT_DIR + "\\" + PROJECT_NAME + "\\WEB-INF\\classes\\mapper";
+        PROJECT_WEB_INF_DIR = PROJECT_DIR + "\\src\\main\\webapp\\WEB-INF";
+        PATCH_WEB_INF_DIR = PATCH_AND_TEMPLATE_OUTPUT_DIR + "\\" + PROJECT_NAME + "\\WEB-INF";
+
+        filters.add(new TypeFilter(PROJECT_CLASSES_DIR, PATCH_CLASSES_DIR, ".class"));
+        filters.add(new TypeFilter(PROJECT_MAPPER_DIR, PATCH_MAPPER_DIR, ".xml"));
+        filters.add(new TypeFilter(PROJECT_WEB_INF_DIR, PATCH_WEB_INF_DIR, ".jsp,.jar"));
     }
 
     public void createTemplate() {
@@ -66,9 +79,12 @@ public class FileComparator {
         }
     }
 
-    public void patch(String templateName) {
+    public void patch(String baseTemplateName) {
         System.out.println("patch start");
-        File templateFile = new File(PATCH_AND_TEMPLATE_OUTPUT_DIR, templateName);
+        if(baseTemplateName == null || baseTemplateName.length() == 0) {
+            throw new RuntimeException("templateName is empty");
+        }
+        File templateFile = new File(PATCH_AND_TEMPLATE_OUTPUT_DIR, baseTemplateName);
         FileTemplate template = (FileTemplate) FileSerializer.deserialize(templateFile);
         template.clearChanged();
         String timestamp = StringUtils.currentTimestamp();
